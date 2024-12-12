@@ -1,15 +1,15 @@
 class Auteur{
-  int? _idAuteur = 0;
+  int _idAuteur = 0;
   String _nomAuteur = '';
 
   //Constructeur
-  Auteur({int? idAuteur,required String nomAuteur}){
+  Auteur({required idAuteur,required String nomAuteur}){
        _idAuteur = idAuteur;
         _nomAuteur = nomAuteur!;
   }
 
   //Getters
-  int? get idAuteur => _idAuteur;
+  int get idAuteur => _idAuteur;
   String get nomAuteur => _nomAuteur;
 
   //Setters

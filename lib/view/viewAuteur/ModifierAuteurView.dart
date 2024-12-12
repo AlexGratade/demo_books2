@@ -16,31 +16,32 @@ class ModifierAuteurView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('modifier l\'Auteur')),
-      body: Padding(padding: EdgeInsets.all(16.0),
-      child: Form(
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
                 controller: _nomAuteurController,
-                decoration: InputDecoration(
-                  labelText: 'Nom de l\'auteur'),
+                decoration: InputDecoration(labelText: 'Nom de l\'auteur'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer le nom de l\'auteur';
                   }
                   return null;
                 },
-    ),
+              ),
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-    if (_formKey.currentState!.validate()) {
-    Provider.of<AuteurViewModel>(context, listen: false)
-        .mettreAJourAuteur(auteur.idAuteur!, _nomAuteurController.text);
-    Navigator.pop(context); // Retour à la liste des auteurs
-    }
-    },
+                  if (_formKey.currentState!.validate()) {
+                    Provider.of<AuteurViewModel>(context, listen: false)
+                        .mettreAJourAuteur(
+                            auteur.idAuteur!, _nomAuteurController.text);
+                    Navigator.pop(context); // Retour à la liste des auteurs
+                  }
+                },
                 child: Text('Mettre a jour'),
               ),
             ],

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodel/viewModelLivre/LivreViewModel.dart';
+import '../../viewmodel/viewModelAuteur/AuteurViewModel.dart'; // Assurez-vous d'importer ce fichier
 
-
-class AjouterLivreView extends StatelessWidget{
+class AjouterLivreView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titreLivreController = TextEditingController();
-  final TextEditingController _idAuteurController = TextEditingController();
+  int? _selectedAuteurId; // Pour stocker l'ID de l'auteur sélectionné
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +32,24 @@ class AjouterLivreView extends StatelessWidget{
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _idAuteurController,
-                decoration: InputDecoration(
-                  labelText: 'ID de l\'auteur',
-                ),
+              SizedBox(height: 16.0),
+              // Liste déroulante pour sélectionner l'auteur
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(labelText: 'Sélectionner un auteur'),
+                value: _selectedAuteurId,
+                items: Provider.of<AuteurViewModel>(context)
+                    .auteurs
+                    .map((auteur) => DropdownMenuItem<int>(
+                  value: auteur.idAuteur,
+                  child: Text(auteur.nomAuteur),
+                ))
+                    .toList(),
+                onChanged: (value) {
+                  _selectedAuteurId = value; // Met à jour l'ID de l'auteur sélectionné
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer l\'ID de l\'auteur';
+                  if (value == null) {
+                    return 'Veuillez sélectionner un auteur';
                   }
                   return null;
                 },
@@ -47,9 +57,9 @@ class AjouterLivreView extends StatelessWidget{
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
+                  if (_formKey.currentState!.validate() && _selectedAuteurId != null) {
                     Provider.of<LivreViewModel>(context, listen: false)
-                        .ajouterLivre(_titreLivreController.text, int.parse(_idAuteurController.text));
+                        .ajouterLivre(_titreLivreController.text, _selectedAuteurId!);
                     Navigator.pop(context);
                   }
                 },
@@ -61,5 +71,4 @@ class AjouterLivreView extends StatelessWidget{
       ),
     );
   }
-
 }

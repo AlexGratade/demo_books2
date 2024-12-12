@@ -4,13 +4,26 @@ import '../../viewmodel/viewModelLivre/LivreViewModel.dart';
 import 'AjouterLivreView.dart';
 import 'ModifierLivreView.dart';
 
-class LivreListView extends StatelessWidget {
+class LivreListView extends StatefulWidget {
+  @override
+  _LivreListViewState createState() => _LivreListViewState();
+}
+
+class _LivreListViewState extends State<LivreListView> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<LivreViewModel>(context, listen: false).chargerLivres();
+  }
+
+  void _afficherMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    //Charger la liste des livres lorsque la vue est construite
-    Provider.of<LivreViewModel>(context, listen: false)
-        .chargerLivres();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Liste des livres'),
@@ -18,52 +31,59 @@ class LivreListView extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              // Ouvrir l'ecran d'ajout d'un livre
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => AjouterLivreView()),
-              );
+              ).then((_) {
+                Provider.of<LivreViewModel>(context, listen: false).chargerLivres();
+                _afficherMessage(context, 'Livre ajouté avec succès.');
+              });
             },
           ),
         ],
       ),
       body: Consumer<LivreViewModel>(
-        builder: (context, LivreViewModel, child) {
-          if (LivreViewModel.livres.isEmpty) {
-            return const Center(
-                child: CircularProgressIndicator());
+        builder: (context, livreViewModel, child) {
+          if (livreViewModel.livres.isEmpty) {
+            return Center(child: Text('Aucun livre trouvé.'));
           }
 
           return ListView.builder(
-              itemCount: LivreViewModel.livres.length,
-              itemBuilder: (context, index) {
-                final livre = LivreViewModel.livres[index];
-                return ListTile(
-                  title: Text(livre.titre),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ModifierLivreView(livre: livre),
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          LivreViewModel.supprimerLivre(livre.idLivre);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
+            itemCount: livreViewModel.livres.length,
+            itemBuilder: (context, index) {
+              final livre = livreViewModel.livres[index];
+              return ListTile(
+                title: Text(livre.titre),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ModifierLivreView(livre: livre),
+                          ),
+                        ).then((_) {
+                          Provider.of<LivreViewModel>(context, listen: false)
+                              .chargerLivres();
+                          _afficherMessage(context, 'Livre modifié avec succès.');
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        Provider.of<LivreViewModel>(context, listen: false)
+                            .supprimerLivre(livre.idLivre);
+                        _afficherMessage(context, 'Livre supprimé avec succès.');
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),

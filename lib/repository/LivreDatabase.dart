@@ -15,11 +15,26 @@ class LivreDatabase {
     final db = await _dbClient.database;
     return await db.query('LIVRE');
   }
+  //Recuperer un livre
+  Future<Map<String, dynamic>> obtenirLivre(int idLivre) async {
+    final db = await _dbClient.database;
+    final result = await db.query('LIVRE', where: 'idLivre = ?', whereArgs: [idLivre]);
+    return result.first;
+  }
 
   //Mettre a jour un livre
-  Future<int> mettreAJourLivre(int idLivre, String nomLivre, int idAuteur) async {
-    final db = await _dbClient.database;
-    return await db.update('LIVRE', {'nomLivre': nomLivre, 'idAuteur': idAuteur}, where: 'idLivre = ?', whereArgs: [idLivre]);
+  Future<void> mettreAJourLivre(int idLivre, String titre, int idAuteur) async {
+    final db = await _dbClient.database; // Assurez-vous que cette méthode récupère bien l'instance de la base de données
+
+    await db.update(
+      'livres',
+      {
+        'titre': titre,
+        'idauteur': idAuteur,
+      },
+      where: 'idLivre = ?',
+      whereArgs: [idLivre],
+    );
   }
 
   //Supprimer un livre

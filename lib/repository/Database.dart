@@ -47,6 +47,17 @@ class DatabaseClient {
         FOREIGN KEY(idAuteur) REFERENCES AUTEUR(idAuteur)
       )
     ''');
+    await db.execute('''
+    CREATE TABLE USERS(
+        idUser INT,
+        nomUser VARCHAR(50),
+    prenomUser VARCHAR(50),
+    loginUser VARCHAR(50),
+    mdpUser VARCHAR(50),
+    roleUser VARCHAR(50),
+    PRIMARY KEY(idUser)
+    )
+    ''');
   }
   /*
 // Methode CRUD pour les livres et les auteurs

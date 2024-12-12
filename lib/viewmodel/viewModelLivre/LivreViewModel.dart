@@ -32,4 +32,6 @@ class LivreViewModel with ChangeNotifier {
     await _livreDb.supprimerLivre(idLivre);
     await chargerLivres();
   }
+
+  obtenirLivre(int livreId) {}
 }
